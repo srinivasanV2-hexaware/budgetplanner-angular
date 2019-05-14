@@ -3,14 +3,42 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
+import { CreateBudgetComponent } from './create-budget/create-budget.component';
+import { ListBudgetComponent } from './list-budget/list-budget.component';
+import { EditBudgetComponent } from './edit-budget/edit-budget.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { HeaderComponent } from './header/header.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { MatButtonModule, MatCardModule, MatToolbarModule, MatInputModule, MatProgressBarModule, MatListModule, MatIconModule, MatBottomSheetModule, MatStepperModule, MatFormFieldModule, MatTableModule, MatPaginatorModule } from '@angular/material';
+import { NotfoundComponent } from './notfound/notfound.component';
+import { HomeComponent } from './home/home.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CreateBudgetComponent,
+    ListBudgetComponent,
+    EditBudgetComponent,
+    StatisticsComponent,
+    HeaderComponent,
+    NotfoundComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    FormsModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatStepperModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]
