@@ -2,10 +2,37 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { ChartType, ChartOptions } from 'chart.js';
 import { SingleDataSet, Label, monkeyPatchChartJsLegend, monkeyPatchChartJsTooltip } from 'ng2-charts';
+import { ApiserviceService } from '../apiservice.service';
+import {MomentDateAdapter} from '@angular/material-moment-adapter';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import {MatDatepicker} from '@angular/material/datepicker';
+import {FormControl} from '@angular/forms';
+import * as _moment from 'moment';
+// tslint:disable-next-line:no-duplicate-imports
+import {default as _rollupMoment, Moment} from 'moment';
+
+const moment = _rollupMoment || _moment;
+
+// See the Moment.js docs for the meaning of these formats:
+// https://momentjs.com/docs/#/displaying/format/
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'MM/YYYY',
+  },
+  display: {
+    dateInput: 'MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+}
 @Component({
   selector: 'app-create-budget',
   templateUrl: './create-budget.component.html',
-  styleUrls: ['./create-budget.component.css']
+  styleUrls: ['./create-budget.component.css'],
+  providers:[ {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+
+  {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS}]
 })
 export class CreateBudgetComponent implements OnInit {
 
@@ -26,11 +53,24 @@ export class CreateBudgetComponent implements OnInit {
   public pieChartLegend = false;
   public totalValue = 0;
   public pieChartPlugins = [];
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private api:ApiserviceService) {
     monkeyPatchChartJsTooltip();
     monkeyPatchChartJsLegend();
   }
+  date = new FormControl(moment());
 
+  chosenYearHandler(normalizedYear: Moment) {
+    const ctrlValue = this.date.value;
+    ctrlValue.year(normalizedYear.year());
+    this.date.setValue(ctrlValue);
+  }
+
+  chosenMonthHandler(normalizedMonth: Moment, datepicker: MatDatepicker<Moment>) {
+    const ctrlValue = this.date.value;
+    ctrlValue.month(normalizedMonth.month());
+    this.date.setValue(ctrlValue);
+    datepicker.close();
+  }
   ngOnInit() {
     this.incomeFormGroup = this._formBuilder.group({
       monthincctrl: ['', Validators.required],
@@ -128,7 +168,15 @@ export class CreateBudgetComponent implements OnInit {
       const finaldata =  {...this.incomeFormGroup.value, ...this.housingFormGroup.value,
        ...this.transportFormGroup.value, ...this.educationalFormGroup.value, ...this.personalFormGroup.value,
      ...this.savingsFormGroup.value};
-     console.log(finaldata);
+      const date = new Date(this.date.value);
+      const month = date.getFullYear() + '-' + ((date.getMonth() + 1).toString().length < 2
+      ?("0"+(date.getMonth() + 1)) : (date.getMonth() + 1)) + '-' + (date.getDate());
+     finaldata['date'] = month;
+     finaldata['budget'] = 'budget';
+     this.api.postBudget(finaldata).subscribe(resp => {
+       console.log(resp);
+     });
+
   }
   nextSavings() {
     const emergfund: number = +this.savingsFormGroup.value.emergctrl;

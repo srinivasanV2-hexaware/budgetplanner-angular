@@ -7,8 +7,20 @@
     <mat-step [stepControl]="incomeFormGroup">
         <form [formGroup]="incomeFormGroup">
           <ng-template matStepLabel>Income</ng-template>
+          <mat-grid-list cols="1" rowHeight="100"  style="text-align:center;">
+          <mat-form-field>
+              <input matInput [matDatepicker]="dp" placeholder="Budget Month" [formControl]="date">
+              <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker #dp
+                              startView="multi-year"
+                              (yearSelected)="chosenYearHandler($event)"
+                              (monthSelected)="chosenMonthHandler($event, dp)"
+                              panelClass="example-month-picker">
+              </mat-datepicker>
+            </mat-form-field>
+          </mat-grid-list>
           <mat-grid-list cols="2" rowHeight="100">
-            <mat-grid-tile>          
+            <mat-grid-tile>
               <mat-form-field>
                 <input matInput placeholder="Monthly Income" autocomplete="off" formControlName="monthincctrl" required>
               </mat-form-field>
@@ -16,9 +28,9 @@
             <mat-grid-tile><mat-form-field>
               <input matInput placeholder="Other Income" autocomplete="off" formControlName="otherincctrl">
             </mat-form-field></mat-grid-tile>
-            
+
           </mat-grid-list>
-          
+
           <div>
             <button mat-raised-button matStepperNext  color="primary" (click)="nextIncome()">Next</button>
           </div>
@@ -28,7 +40,7 @@
     <form [formGroup]="housingFormGroup">
       <ng-template matStepLabel>Housing</ng-template>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Mortgage" autocomplete="off" formControlName="mortctrl" >
           </mat-form-field>
@@ -36,10 +48,10 @@
         <mat-grid-tile><mat-form-field>
           <input matInput placeholder="HOA Fees" autocomplete="off" formControlName="hoafeesctrl">
         </mat-form-field></mat-grid-tile>
-        
+
       </mat-grid-list>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Rent" autocomplete="off" formControlName="rentctrl" >
           </mat-form-field>
@@ -47,10 +59,10 @@
         <mat-grid-tile><mat-form-field>
           <input matInput placeholder="Home Insurance" autocomplete="off" formControlName="homectrl">
         </mat-form-field></mat-grid-tile>
-        
+
       </mat-grid-list>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Repair/Maintenance" autocomplete="off" formControlName="repairctrl" >
           </mat-form-field>
@@ -58,10 +70,10 @@
         <mat-grid-tile><mat-form-field>
           <input matInput placeholder="Water/Gas/Electricity" autocomplete="off" formControlName="waterctrl">
         </mat-form-field></mat-grid-tile>
-        
+
       </mat-grid-list>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Cable/TV/Internet" autocomplete="off" formControlName="cablectrl" >
           </mat-form-field>
@@ -69,7 +81,7 @@
         <mat-grid-tile><mat-form-field>
           <input matInput placeholder="Phone & Cell" autocomplete="off" formControlName="phonectrl">
         </mat-form-field></mat-grid-tile>
-        
+
       </mat-grid-list>
       <div>
           <button mat-raised-button matStepperPrevious  color="warn">Back</button>&nbsp;
@@ -81,7 +93,7 @@
     <form [formGroup]="transportFormGroup">
       <ng-template matStepLabel>Transportation</ng-template>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Car payment" autocomplete="off" formControlName="carctrl" >
           </mat-form-field>
@@ -89,10 +101,10 @@
         <mat-grid-tile><mat-form-field>
           <input matInput placeholder="Car Insurance" autocomplete="off" formControlName="carinsctrl">
         </mat-form-field></mat-grid-tile>
-        
+
       </mat-grid-list>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Gas/Fuel" autocomplete="off" formControlName="gasctrl" >
           </mat-form-field>
@@ -111,7 +123,7 @@
     <form [formGroup]="educationalFormGroup">
       <ng-template matStepLabel>Educational</ng-template>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="School Supplies" autocomplete="off" formControlName="schoolctrl" >
           </mat-form-field>
@@ -119,15 +131,15 @@
         <mat-grid-tile><mat-form-field>
           <input matInput placeholder="Student Loans" autocomplete="off" formControlName="loansctrl">
         </mat-form-field></mat-grid-tile>
-        
+
       </mat-grid-list>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="College Tuition" autocomplete="off" formControlName="tuitionctrl" >
           </mat-form-field>
           </mat-grid-tile>
-       
+
       </mat-grid-list>
       <div>
           <button mat-raised-button matStepperPrevious  color="warn">Back</button>&nbsp;
@@ -139,7 +151,7 @@
     <form [formGroup]="personalFormGroup">
       <ng-template matStepLabel>Personal</ng-template>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Groceries/Household" autocomplete="off" formControlName="groceriesctrl" >
           </mat-form-field>
@@ -147,34 +159,34 @@
         <mat-grid-tile><mat-form-field>
           <input matInput placeholder="Clothing" autocomplete="off" formControlName="clothingctrl">
         </mat-form-field></mat-grid-tile>
-        
+
       </mat-grid-list>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Entertainment" autocomplete="off" formControlName="entertainctrl" >
           </mat-form-field>
           </mat-grid-tile>
-          <mat-grid-tile>          
+          <mat-grid-tile>
             <mat-form-field>
               <input matInput placeholder="Medical" autocomplete="off" formControlName="medicalctrl" >
             </mat-form-field>
             </mat-grid-tile>
-         
+
       </mat-grid-list>
 
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Pet Supplies" autocomplete="off" formControlName="petctrl" >
           </mat-form-field>
           </mat-grid-tile>
-          <mat-grid-tile>          
+          <mat-grid-tile>
             <mat-form-field>
               <input matInput placeholder="Other Expenses" autocomplete="off" formControlName="otherctrl" >
             </mat-form-field>
             </mat-grid-tile>
-         
+
       </mat-grid-list>
       <div>
           <button mat-raised-button matStepperPrevious  color="warn">Back</button>&nbsp;
@@ -186,26 +198,26 @@
     <form [formGroup]="savingsFormGroup">
       <ng-template matStepLabel>Savings</ng-template>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Emergency Fund" autocomplete="off" formControlName="emergctrl" >
           </mat-form-field>
           </mat-grid-tile>
-          <mat-grid-tile>          
+          <mat-grid-tile>
             <mat-form-field>
               <input matInput placeholder="Investments" autocomplete="off" formControlName="investctrl" >
             </mat-form-field>
             </mat-grid-tile>
-         
+
       </mat-grid-list>
       <mat-grid-list cols="2" rowHeight="100">
-        <mat-grid-tile>          
+        <mat-grid-tile>
           <mat-form-field>
             <input matInput placeholder="Retirement" autocomplete="off" formControlName="retirectrl" >
           </mat-form-field>
           </mat-grid-tile>
-          
-         
+
+
       </mat-grid-list>
       <div>
           <button mat-raised-button matStepperPrevious  color="warn">Back</button>&nbsp;
@@ -221,7 +233,7 @@
       <button mat-raised-button  matStepperNext  color="primary" (click)="SubmitValue()">Submit</button>&nbsp;
       <button mat-raised-button (click)="stepper.reset()">Reset</button>
     </div>
-    
+
   </mat-step>
 </mat-horizontal-stepper>
 </mat-card>
@@ -229,9 +241,9 @@
 <div style="width: 30%;display:inline-block;vertical-align:top;padding-top:10px;" *ngIf="pieChartData.length>0">
     <mat-toolbar>Statistics</mat-toolbar>
     <br/>
-    <canvas baseChart 
-    [data]="pieChartData" 
-    [labels]="pieChartLabels" 
+    <canvas baseChart
+    [data]="pieChartData"
+    [labels]="pieChartLabels"
     [chartType]="pieChartType"
     [options]="pieChartOptions"
     [plugins]="pieChartPlugins"

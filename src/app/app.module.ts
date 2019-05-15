@@ -9,12 +9,14 @@ import { EditBudgetComponent } from './edit-budget/edit-budget.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { HeaderComponent } from './header/header.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { MatButtonModule, MatCardModule, MatToolbarModule, MatInputModule, MatProgressBarModule, MatListModule, MatIconModule, MatBottomSheetModule, MatStepperModule, MatFormFieldModule, MatTableModule, MatPaginatorModule, MatGridListModule } from '@angular/material';
+import { MatButtonModule, MatCardModule, MatToolbarModule, MatInputModule, MatProgressBarModule, MatListModule, MatIconModule, MatBottomSheetModule, MatStepperModule, MatFormFieldModule, MatTableModule, MatPaginatorModule, MatGridListModule, MatDatepickerModule } from '@angular/material';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { ChartsModule } from 'ng2-charts';
 
 import { HomeComponent } from './home/home.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { ApiserviceService } from './apiservice.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,6 +34,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
+    HttpClientModule,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -42,9 +45,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatPaginatorModule,
     MatCardModule,
     MatGridListModule,
-    ChartsModule
+    ChartsModule,
+    MatDatepickerModule
   ],
-  providers: [],
+  providers: [ApiserviceService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
