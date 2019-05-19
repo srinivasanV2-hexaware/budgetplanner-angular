@@ -1,5 +1,5 @@
 <div>
-<app-header></app-header>
+<app-header [title]="'ADD'"></app-header>
 </div>
 <div style="padding:10px; width:65%;display:inline-block;">
 <mat-card>
@@ -230,8 +230,9 @@
     You are now done.
     <div>
         <button mat-raised-button matStepperPrevious  color="warn">Back</button>&nbsp;
-      <button mat-raised-button  matStepperNext  color="primary" (click)="SubmitValue()">Submit</button>&nbsp;
-      <button mat-raised-button (click)="stepper.reset()">Reset</button>
+      <button mat-raised-button  matStepperNext  color="primary" *ngIf="!idvalue" (click)="SubmitValue()">Submit</button>&nbsp;
+      <button mat-raised-button  matStepperNext  color="primary" *ngIf="idvalue" (click)="UpdateValue(idvalue)">Update</button>&nbsp;
+      <button mat-raised-button (click)="stepper.reset()" *ngIf="!idvalue">Reset</button>
     </div>
 
   </mat-step>

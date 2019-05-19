@@ -10,6 +10,8 @@ import {FormControl} from '@angular/forms';
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import {default as _rollupMoment, Moment} from 'moment';
+import { Router, ActivatedRoute } from '@angular/router';
+import { debug } from 'util';
 
 const moment = _rollupMoment || _moment;
 
@@ -30,7 +32,7 @@ export const MY_FORMATS = {
   selector: 'app-create-budget',
   templateUrl: './create-budget.component.html',
   styleUrls: ['./create-budget.component.css'],
-  providers:[ {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+  providers: [ {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
 
   {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS}]
 })
@@ -53,12 +55,13 @@ export class CreateBudgetComponent implements OnInit {
   public pieChartLegend = false;
   public totalValue = 0;
   public pieChartPlugins = [];
-  constructor(private _formBuilder: FormBuilder, private api:ApiserviceService) {
+  constructor(private activate: ActivatedRoute , private _formBuilder: FormBuilder, private api: ApiserviceService, private route: Router) {
     monkeyPatchChartJsTooltip();
     monkeyPatchChartJsLegend();
   }
   date = new FormControl(moment());
-
+idvalue: any;
+idsvalue: any;
   chosenYearHandler(normalizedYear: Moment) {
     const ctrlValue = this.date.value;
     ctrlValue.year(normalizedYear.year());
@@ -72,6 +75,59 @@ export class CreateBudgetComponent implements OnInit {
     datepicker.close();
   }
   ngOnInit() {
+    this.idsvalue = {};
+    this.idvalue = this.activate.snapshot.params['id'];
+    this.api.getoneBudget(this.idvalue).subscribe(data => {
+      console.log(data);
+      this.incomeFormGroup.setValue({
+        monthincctrl: data[0]['income'],
+        otherincctrl: data[0]['other_income']
+      });
+      this.housingFormGroup.setValue({
+        phonectrl: data[0]['phonecell'],
+        cablectrl: data[0]['cabtvinternet'],
+        waterctrl: data[0]['watgasele'],
+        repairctrl: data[0]['repair_main'],
+        homectrl: data[0]['homeins'],
+        rentctrl: data[0]['rent'],
+        mortctrl: data[0]['mortgage'],
+        hoafeesctrl: data[0]['hoa']
+      });
+      this.transportFormGroup.setValue({
+        carctrl: data[0]['car_pmt'],
+        carinsctrl: data[0]['car_insu'],
+        gasctrl: data[0]['gas_fuel'],
+        carrepctrl: data[0]['car_repairs']
+      });
+      this.educationalFormGroup.setValue({
+        schoolctrl: data[0]['school_supp'],
+        loansctrl:  data[0]['stud_loans'],
+        tuitionctrl: data[0]['colleg_tution']
+      });
+      this.personalFormGroup.setValue({
+        groceriesctrl: data[0]['groc_hous'],
+        clothingctrl: data[0]['clothing'],
+        entertainctrl: data[0]['entert'],
+        medicalctrl: data[0]['medical'],
+        petctrl: data[0]['pet_supp'],
+        otherctrl: data[0]['other_exp'],
+      });
+      this.savingsFormGroup.setValue({
+        emergctrl: data[0]['emer_fund'],
+        investctrl: data[0]['investment'],
+        retirectrl: data[0]['retirement']
+      });
+      this.idsvalue.housid = data[0]['house_id'];
+      this.idsvalue.eduid = data[0]['edu_id'];
+      this.idsvalue.persid = data[0]['pers_id'];
+      this.idsvalue.savid = data[0]['sav_id'];
+      this.idsvalue.transid = data[0]['trans_id'];
+      this.nextEducation();
+      this.nextHousing();
+      this.nextIncome();
+      this.nextPersonal();
+      this.nextTransportation();
+    });
     this.incomeFormGroup = this._formBuilder.group({
       monthincctrl: ['', Validators.required],
       otherincctrl: ['']
@@ -143,6 +199,11 @@ export class CreateBudgetComponent implements OnInit {
     ((+this.pieChartData[1]) + (+this.pieChartData[2])  + (+this.pieChartData[3]) +
     (+this.pieChartData[4]) + (+this.pieChartData[5]));
     console.log(this.pieChartData[0]);
+    this.nextEducation();
+      this.nextHousing();
+      this.nextIncome();
+      this.nextPersonal();
+      this.nextTransportation();
   }
   nextEducation() {
     const schoolsupp: number = +this.educationalFormGroup.value.schoolctrl;
@@ -170,13 +231,41 @@ export class CreateBudgetComponent implements OnInit {
      ...this.savingsFormGroup.value};
       const date = new Date(this.date.value);
       const month = date.getFullYear() + '-' + ((date.getMonth() + 1).toString().length < 2
-      ?("0"+(date.getMonth() + 1)) : (date.getMonth() + 1)) + '-' + (date.getDate());
+      ? ('0' + (date.getMonth() + 1)) : (date.getMonth() + 1)) + '-' + (date.getDate());
      finaldata['date'] = month;
      finaldata['budget'] = 'budget';
      this.api.postBudget(finaldata).subscribe(resp => {
        console.log(resp);
      });
-
+  this.route.navigate(['']) .then(() => {
+    window.location.reload();
+  });
+  }
+  UpdateValue(id) {
+    const finaldata =  {...this.incomeFormGroup.value, ...this.housingFormGroup.value,
+      ...this.transportFormGroup.value, ...this.educationalFormGroup.value, ...this.personalFormGroup.value,
+    ...this.savingsFormGroup.value, ...this.idsvalue};
+    // tslint:disable-next-line:no-debugger
+    const date = new Date(this.date.value);
+    const month = date.getFullYear() + '-' + ((date.getMonth() + 1).toString().length < 2
+    ? ('0' + (date.getMonth() + 1)) : (date.getMonth() + 1)) + '-' + (date.getDate());
+   finaldata['date'] = month;
+    console.log(finaldata);
+    finaldata['budget'] = 'updatebudget';
+    finaldata['id'] = id;
+    finaldata['eduid'] = this.idsvalue.eduid;
+    finaldata['housid'] = this.idsvalue.housid;
+    finaldata['persid'] =  this.idsvalue.persid;
+    finaldata['savid'] = this.idsvalue.savid;
+    finaldata['transid'] = this.idsvalue.transid;
+    this.api.updateBudget(finaldata).subscribe(resp => {
+      // tslint:disable-next-line:no-debugger
+      // debugger;
+      console.log(resp);
+    });
+    this.route.navigate(['']) .then(() => {
+      window.location.reload();
+    });
   }
   nextSavings() {
     const emergfund: number = +this.savingsFormGroup.value.emergctrl;

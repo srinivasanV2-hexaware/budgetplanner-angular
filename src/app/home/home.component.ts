@@ -1,30 +1,102 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatDatepickerInputEvent } from '@angular/material';
+import { ApiserviceService } from '../apiservice.service';
+import { Observable } from 'rxjs';
+import {MatDatepicker} from '@angular/material/datepicker';
+import {FormControl} from '@angular/forms';
+import * as _moment from 'moment';
+// tslint:disable-next-line:no-duplicate-imports
+import {default as _rollupMoment, Moment} from 'moment';
+import { Router } from '@angular/router';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+const moment = _rollupMoment || _moment;
 
+// See the Moment.js docs for the meaning of these formats:
+// https://momentjs.com/docs/#/displaying/format/
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'MM/YYYY',
+  },
+  display: {
+    dateInput: 'MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  providers:[ {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+
+  {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS}]
 })
+
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor( private api: ApiserviceService, private route: Router) { }
 
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
-
+  displayedColumns: string[] = ['period', 'income', 'othincome', 'educational', 'housing', 'savings', 'personal',
+  'transportation', 'expense', 'profit', 'actions'];
+  dataSource = new MatTableDataSource<BudgetElement>();
+  date = new FormControl(moment());
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
+  totalvalue: any;
+  lossvalue: any;
+  
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
+    // tslint:disable-next-line:radix
+    const reducer = (accumulator, element) => {return (accumulator + parseInt(element.transport + element.personals + element.savings
+      + element.housings + element.schooling ));
+    };
+    // tslint:disable-next-line:radix
+    // tslint:disable-next-line:max-line-length
+    const minreducer = (accumulator, element) => {return (+(accumulator) + ((element.income + element.other_income) - (element.transport + element.personals + element.savings + element.housings + element.schooling )));
+    };
+     this.api.getBudget().subscribe(data => {
+    if (data.length > 0) {
+     this.totalvalue = data.reduce(reducer, 0);
+     this.lossvalue = data.reduce(minreducer, 0);
+     this.dataSource.data = data;
+    }
+     });
+  }
+  addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
+    // tslint:disable-next-line:radix
+     // tslint:disable-next-line:max-line-length
+    const reducer = (accumulator, element) => {return (accumulator + parseInt(element.transport + element.personals + element.savings + element.housings + element.schooling ));
+    };
+    // tslint:disable-next-line:radix
+    // tslint:disable-next-line:max-line-length
+    const minreducer = (accumulator, element) => {return (+(accumulator) + ((element.income + element.other_income) - (element.transport + element.personals + element.savings + element.housings + element.schooling )));
+    };
+    const datepick = new Date(event.value['_d']);
+    const month = (datepick.getMonth() + 1).toString().length === 1 ? '0' + (datepick.getMonth() + 1) : (datepick.getMonth() + 1);
+   const finalfulldate = datepick.getFullYear() + '-' + (month);
+    this.api.getBudgetMonth(finalfulldate).subscribe(data => {
+    this.dataSource.data = data;
+    this.paginator._changePageSize(this.paginator.pageSize);
+    this.totalvalue = data.reduce(reducer, 0);
+     this.lossvalue = data.reduce(minreducer, 0);
+     });
+  }
+  budgetEdit(id) {
+    console.log(id);
+    this.route.navigate(['update/' + id]);
+  }
+  budgetDelete(id) {
+    console.log(id);
+    this.api.deleteBudget(id).subscribe();
+    this.route.navigate(['']) .then(() => {
+      window.location.reload();
+    });
+    // window.location.reload();
   }
 
 
-
 }
-
-
-
 export interface PeriodicElement {
   name: string;
   position: number;
@@ -32,25 +104,8 @@ export interface PeriodicElement {
   symbol: string;
 }
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-  {position: 11, name: 'Sodium', weight: 22.9897, symbol: 'Na'},
-  {position: 12, name: 'Magnesium', weight: 24.305, symbol: 'Mg'},
-  {position: 13, name: 'Aluminum', weight: 26.9815, symbol: 'Al'},
-  {position: 14, name: 'Silicon', weight: 28.0855, symbol: 'Si'},
-  {position: 15, name: 'Phosphorus', weight: 30.9738, symbol: 'P'},
-  {position: 16, name: 'Sulfur', weight: 32.065, symbol: 'S'},
-  {position: 17, name: 'Chlorine', weight: 35.453, symbol: 'Cl'},
-  {position: 18, name: 'Argon', weight: 39.948, symbol: 'Ar'},
-  {position: 19, name: 'Potassium', weight: 39.0983, symbol: 'K'},
-  {position: 20, name: 'Calcium', weight: 40.078, symbol: 'Ca'},
-];
+export interface BudgetElement {
+  period: string;
+  income: number;
+  othincome: number;
+}

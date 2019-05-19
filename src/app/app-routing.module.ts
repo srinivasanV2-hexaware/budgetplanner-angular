@@ -7,10 +7,10 @@ import { NotfoundComponent } from './notfound/notfound.component';
 import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [{
-  path: '', component: HomeComponent},
-  {path: 'view', component: ListBudgetComponent},
-  {path: 'update/:id', component: EditBudgetComponent},{path: 'new', component: CreateBudgetComponent},
-   {path: '**', component: NotfoundComponent}];
+path: '', component: HomeComponent}, {path: 'view', component: ListBudgetComponent},
+{path: 'update/:id', component: CreateBudgetComponent},
+{path: 'new', component: CreateBudgetComponent},
+{path: '**', component: NotfoundComponent}];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

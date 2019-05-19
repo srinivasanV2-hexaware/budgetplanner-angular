@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Route, Router } from '@angular/router';
 
 @Component({
@@ -7,12 +7,13 @@ import { Route, Router } from '@angular/router';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-
-  constructor(private route:Router) { }
-
+  // tslint:disable-next-line:no-input-rename
+  @Input ('title')
+  title: any;
+   constructor(private route: Router) { }
   ngOnInit() {
   }
-  AddNewBudget(){
+  AddNewBudget() {
   this.route.navigate(['new']);
   }
 }
